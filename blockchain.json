@@ -1,0 +1,65 @@
+{
+  "name": "Workflow E – Blockchain Logger (v1.0)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "record-summary",
+        "options": {}
+      },
+      "id": "Webhook1",
+      "name": "📥 Receive Attendance Summary",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookDescription": "Receives JSON summary from Workflow D"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst summary = $json.summary || JSON.stringify($json);\nconst hash = crypto.createHash('sha256').update(summary).digest('hex');\nreturn [{ json: { ...$json, summaryHash: hash } }];"
+      },
+      "id": "Code1",
+      "name": "⚙️ Compute Summary Hash",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "none",
+        "url": "http://127.0.0.1:7545",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"eth_sendTransaction\",\n  \"params\": [{\n    \"from\": \"0xREPLACE_WITH_YOUR_GANACHE_ACCOUNT\",\n    \"to\": \"0xREPLACE_WITH_YOUR_GANACHE_ACCOUNT\",\n    \"value\": \"0x0\",\n    \"data\": \"0x\" + Buffer.from($json.summaryHash).toString('hex')\n  }],\n  \"id\": 1\n}"
+      },
+      "id": "HttpRequest1",
+      "name": "🔗 Store Hash on Blockchain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "no-reply@alxr.ai",
+        "toEmail": "tutor@mit.edu.au",
+        "subject": "✅ Blockchain Record Stored",
+        "text": "Attendance Summary recorded on private blockchain.\\n\\nHash: {{ $json.summaryHash }}\\nTransaction: {{ $json.result || 'Pending' }}"
+      },
+      "id": "Email1",
+      "name": "📧 Notify Tutor (Optional)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [1040, 300]
+    }
+  ],
+  "connections": {
+    "📥 Receive Attendance Summary": { "main": [[{ "node": "⚙️ Compute Summary Hash", "type": "main", "index": 0 }]] },
+    "⚙️ Compute Summary Hash": { "main": [[{ "node": "🔗 Store Hash on Blockchain", "type": "main", "index": 0 }]] },
+    "🔗 Store Hash on Blockchain": { "main": [[{ "node": "📧 Notify Tutor (Optional)", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

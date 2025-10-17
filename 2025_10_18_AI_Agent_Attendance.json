@@ -1,0 +1,1214 @@
+{
+  "name": "AI_Attedance_System",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "🟢 Workflow A – QR Code Generator",
+        "height": 208,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        -592
+      ],
+      "typeVersion": 1,
+      "id": "5a7a7bf0-936a-4725-89f3-76b52c0e0d43",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "🔵 Workflow B – Display QR (GET)\n",
+        "height": 208,
+        "width": 944,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "0019c2e3-fcc7-492e-8b48-b43c2fbaa9c5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -544
+      ],
+      "id": "2db2c850-84ed-4222-b3cb-3f2f15c85a42",
+      "name": "🕒 QR Trigger1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate a pseudo-random token\nconst token = Math.random().toString(36).substring(2, 12); // 10-char random string\n\n// Timestamp\nconst timestamp = new Date().toISOString();\n\n// Classroom fixed location (The Argus, 288 La Trobe St, Melbourne)\nconst latitude = -37.8104;\nconst longitude = 144.9623;\n\n// ------------------------------\n// Google Form Prefilled URL\n// Replace the entry.xxxxx numbers with your real form field IDs\n// MIT_ID = entry.1052268999  (left blank for student input)\n// token  = entry.1935919869\n// timestamp = entry.1752581936\n// ------------------------------\nconst formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSebHfnPoF0Uo8V5gO1eJTOId1ySX3oaKN3-d81ZhhOnXEK7xw/viewform?usp=pp_url&entry.1052268999=&entry.1935919869=${token}&entry.1752581936=${timestamp}`;\n\n// Build QR code image URL pointing to the form\nconst qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(formUrl)}`;\n\n// Default status\nconst status = \"unused\";\n\n// Output\nreturn [\n  {\n    json: {\n      token,\n      timestamp,\n      latitude,\n      longitude,\n      formUrl,\n      qrUrl,\n      status\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -544
+      ],
+      "id": "c22a25e8-8795-4bb8-8c2f-366d49119dde",
+      "name": "💻 Generate QR Token"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ",
+          "mode": "list",
+          "cachedResultName": "QR_Attendance_Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "token": "={{$json.token}}",
+            "timestamp": "={{$json.timestamp}}",
+            "qrUrl": "={{$json.qrUrl}}",
+            "status": "={{$json.status}}",
+            "formUrl": "={{$json.formUrl}}",
+            "latitude": "={{$json.latitude}}",
+            "longitude": "={{$json.longitude}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "token",
+              "displayName": "token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "formUrl",
+              "displayName": "formUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "qrUrl",
+              "displayName": "qrUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        -544
+      ],
+      "id": "1966848e-8390-4c16-a273-167d3d054e55",
+      "name": "📄 Save QR Entry",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "🟣 Workflow C – Attendance Validator (POST)\n",
+        "height": 208,
+        "width": 944,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "acdf70e3-5dbd-4042-b3f7-b6a10ff69b67",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "🟠 Workflow D – AI Agent Summary + Email Report\n",
+        "height": 208,
+        "width": 1472
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "a5c6ad6c-4435-4ae8-a24d-4112dc65e464",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "path": "display-qr-v2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -320
+      ],
+      "id": "8d228001-bef4-4f59-b900-f4aaf7bff466",
+      "name": "🌐 Get QR Webhook",
+      "webhookId": "d522725e-dbc2-45c8-8859-2642d2db4bcb"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ",
+          "mode": "list",
+          "cachedResultName": "QR_Attendance_Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          },
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          },
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        -320
+      ],
+      "id": "55f6e093-b800-4f27-8946-6be738366b07",
+      "name": "🔍 Fetch Latest QR",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all rows\nconst rows = items;\n\n// Take the last row\nconst lastRow = rows[rows.length - 1].json;\n\n// Extract values\nconst token = lastRow.token;\nconst timestamp = lastRow.timestamp;\nconst latitude = lastRow.latitude;\nconst longitude = lastRow.longitude;\n\n// ------------------------------\n// Google Form Prefilled URL\n// Replace the entry.xxxxx numbers with your real form field IDs\n// MIT_ID = entry.1052268999  (left blank for student input)\n// token  = entry.1935919869\n// timestamp = entry.1752581936\n// ------------------------------\nconst formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSebHfnPoF0Uo8V5gO1eJTOId1ySX3oaKN3-d81ZhhOnXEK7xw/viewform?usp=pp_url&entry.1052268999=&entry.1935919869=${token}&entry.1752581936=${timestamp}`;\n\n// Build QR code image URL pointing to the form\nconst qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(formUrl)}`;\n\n// Keep other info as well\nreturn [\n  {\n    json: {\n      ...lastRow,\n      formUrl,\n      qrUrl\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -320
+      ],
+      "id": "75f6c388-27bb-4c8a-8666-640b38864760",
+      "name": "🔧 Build Form & QR"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{$json.qrUrl}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -320
+      ],
+      "id": "38bde9fd-06b6-4115-b7d0-ea0bf0e10ff5",
+      "name": "🌐 Get QR Image"
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "responseDataSource": "set",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        384,
+        -320
+      ],
+      "id": "39c25eef-053c-48df-91f9-096e614406b0",
+      "name": "📤 Display QR Response"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "submit-attendance",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -96
+      ],
+      "id": "7abaaeaa-d467-4ceb-a390-5908048afec0",
+      "name": "📥 Submit Attendance",
+      "webhookId": "7b5356c2-7925-4ef9-8796-469bda862725",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ",
+          "mode": "list",
+          "cachedResultName": "QR_Attendance_Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HU3jVcl1ZB5dN717EUsvgMmK7RSP2MRwvAB4qByidLQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "token",
+              "lookupValue": "={{$json.body.token}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        -96
+      ],
+      "id": "c18f5037-0466-49a7-8984-3370af41541d",
+      "name": "🔍 Match Token",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read the webhook payload (node name must match your canvas exactly)\nconst wb = $item(0).$node[\"📥 Submit Attendance\"].json.body || $item(0).$node[\"📥 Submit Attendance\"].json;\n\n// Values from the webhook, with sheet fallbacks\nconst MIT_ID     = (wb?.MIT_ID ?? \"\").trim() || \"unknown\";\nconst usedToken  = (wb?.token  ?? \"\").trim() || $json.token || \"missing\";\n\n// issuedAt primarily from webhook; fallback to sheet's 'timestamp'\nconst issuedAtRaw =\n  wb?.issuedAt              // from the webhook\n  ?? wb?.issueAt            // (tolerate typo)\n  ?? $json.issuedAt         // if you ever add it to the sheet\n  ?? $json.timestamp        // current sheet column name\n  ?? null;\n\n// Submission time = when this Code node runs (i.e. webhook arrival time)\nconst submittedAt = new Date();\n\n// Validate/parse issuedAt\nif (!issuedAtRaw) {\n  return [{\n    json: {\n      MIT_ID,\n      token: usedToken,\n      status: \"NoMatch\",\n      note: \"Missing issuedAt/timestamp\"\n    }\n  }];\n}\nconst tokenIssuedAt = new Date(issuedAtRaw);\nif (isNaN(tokenIssuedAt)) {\n  return [{\n    json: {\n      MIT_ID,\n      token: usedToken,\n      status: \"NoMatch\",\n      note: `Bad date: ${issuedAtRaw}`\n    }\n  }];\n}\n\n// 60-second window\nconst diffSeconds = Math.round((submittedAt - tokenIssuedAt) / 1000);\nconst status = (diffSeconds >= 0 && diffSeconds <= 60) ? \"Valid\" : \"Expired\";\n\nreturn [{\n  json: {\n    MIT_ID,\n    token: usedToken,\n    issuedAt: tokenIssuedAt.toISOString(),\n    submittedAt: submittedAt.toISOString(),\n    diffSeconds,\n    status,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -96
+      ],
+      "id": "e2f25846-5d01-416d-93af-bd6041553cc7",
+      "name": "✅ Validate Submission"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q",
+          "mode": "list",
+          "cachedResultName": "QR_Attendance_Log_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "token": "={{$json.token}}",
+            "issuedAt": "={{$json.issuedAt}}",
+            "submittedAt": "={{$json.submittedAt}}",
+            "diffSeconds": "={{$json.diffSeconds}}",
+            "status": "={{$json.status}}",
+            "MIT_ID": "={{$json.MIT_ID}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "MIT_ID",
+              "displayName": "MIT_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "token",
+              "displayName": "token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "issuedAt",
+              "displayName": "issuedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "diffSeconds",
+              "displayName": "diffSeconds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        -96
+      ],
+      "id": "2266d234-4b98-49ae-ac41-af75e7bfa639",
+      "name": "🗒️ Log Attendance Result",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        384,
+        -96
+      ],
+      "id": "2e6ef8f9-4e00-4851-9d7f-0d25bed3a274",
+      "name": "📤 Send Validation Response"
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 17
+            }
+          ]
+        }
+      },
+      "name": "⏰ Daily Summary Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        128
+      ],
+      "id": "612aa976-449c-4f26-bfe6-f58ade3b2312"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q",
+          "mode": "list",
+          "cachedResultName": "QR_Attendance_Log_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S4QJs0frCvcKpvMw_hpDA0DTYIAbtmpzMtPrVQA1g3Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        128
+      ],
+      "id": "2d9f090e-ac58-4de1-b38b-0f0b30a0ea87",
+      "name": "📊 Load Attendance Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all rows from previous node\nconst rows = $input.all();\n\n// Group students by status\nconst valid = [];\nconst expired = [];\n\nfor (const item of rows) {\n  const data = item.json;\n  if (data.status === 'Valid') {\n    valid.push(data.MIT_ID);\n  } else if (data.status === 'Expired') {\n    expired.push(data.MIT_ID);\n  }\n}\n\n// Build a summary prompt\nconst summary = `\nDaily Attendance Summary:\n\n✅ VALID (${valid.length}):\n${valid.join(', ') || 'None'}\n\n❌ EXPIRED (${expired.length}):\n${expired.join(', ') || 'None'}\n\nGenerated at: ${new Date().toISOString()}\n`;\n\nreturn [\n  {\n    json: {\n      prompt: summary,\n      validCount: valid.length,\n      expiredCount: expired.length,\n      validList: valid,\n      expiredList: expired\n    }\n  }\n];\n"
+      },
+      "name": "🧠 Build Summary Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        128
+      ],
+      "id": "547c8bf9-bb3b-4ca1-beba-67ab1391bb5a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:11434/api/generate",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "phi3:mini"
+            },
+            {
+              "name": "prompt",
+              "value": "=={{$json.prompt}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "🤖 Generate AI Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        208,
+        128
+      ],
+      "id": "45253ec8-ee8b-428d-bedb-3b75c59f7b66"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =====================================================\n// 1) REBUILD STREAMED TEXT FROM OLLAMA (robust + tolerant)\n// =====================================================\n\n// Safely parse JSON if possible\nfunction safeParse(str) {\n  try { return JSON.parse(str); } catch { return null; }\n}\n\n// Extract all \"response\" fields from streamed Ollama chunks\nfunction extractResponsesFromString(s) {\n  if (typeof s !== \"string\" || !s.trim()) return \"\";\n  let collected = \"\";\n\n  // Single JSON line (e.g., {\"response\":\"...\"})\n  const single = safeParse(s.trim());\n  if (single && typeof single === \"object\" && \"response\" in single) {\n    collected += String(single.response || \"\");\n    return collected;\n  }\n\n  // Multiple concatenated JSON blocks (Ollama stream style)\n  const matches = s.match(/{[^]*?}(?=\\s*{|\\s*$)/g) || [];\n  for (const m of matches) {\n    const obj = safeParse(m);\n    if (obj && typeof obj === \"object\" && \"response\" in obj) {\n      collected += String(obj.response || \"\");\n    }\n  }\n\n  // If nothing parsed, return raw string\n  if (!collected && s) collected += s;\n  return collected;\n}\n\nlet fullText = \"\";\n\n// Collect and merge text from all incoming items\nfor (const item of $input.all()) {\n  const j = item.json;\n\n  if (typeof j?.data === \"string\") {\n    fullText += extractResponsesFromString(j.data);\n    continue;\n  }\n  if (typeof j?.summary === \"string\") {\n    fullText += extractResponsesFromString(j.summary);\n    continue;\n  }\n  if (typeof j === \"object\" && j && \"response\" in j) {\n    fullText += String(j.response || \"\");\n    continue;\n  }\n  if (typeof j === \"string\") {\n    fullText += extractResponsesFromString(j);\n    continue;\n  }\n  if (j != null) {\n    fullText += extractResponsesFromString(JSON.stringify(j));\n  }\n}\n\n// Clean and normalize\nfullText = String(fullText || \"\")\n  .replace(/\\\\n/g, \"\\n\")         // render escaped newlines\n  .replace(/\\r/g, \"\")\n  .replace(/[ \\t]{2,}/g, \" \")    // collapse extra spaces\n  .replace(/[{}]+/g, \"\")         // remove stray braces\n  .replace(/\\s*\\n\\s*/g, \"\\n\")    // trim newlines\n  .trim();\n\n\n// =====================================================\n// 2) EXTRACT SECTIONS + ID COUNTS\n// =====================================================\n\n// Split into valid/expired sections\nconst validSection = fullText.match(/✅[\\s\\S]*?(?=\\n\\s*❌|$)/);\nconst expiredSection = fullText.match(/❌[\\s\\S]*?$/);\n\n// Count MIT-style (or similar) IDs\nfunction extractIDs(section) {\n  if (!section) return [];\n  const ids = section[0].match(/\\b[A-Z]{2,}\\d{3,}\\b/g) || [];\n  return [...new Set(ids)]; // unique\n}\n\nconst validMembers = extractIDs(validSection);\nconst expiredMembers = extractIDs(expiredSection);\n\nconst validCount = validMembers.length;\nconst expiredCount = expiredMembers.length;\nconst totalCount = validCount + expiredCount;\n\n\n// =====================================================\n// 3) OPTIONAL — DATE EXTRACTION\n// =====================================================\nlet summaryDate = \"\";\nconst dateMatch = fullText.match(/for\\s+([A-Za-z]+\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s*\\d{4})/i);\nif (dateMatch) {\n  summaryDate = dateMatch[1].trim();\n} else {\n  summaryDate = new Date().toLocaleDateString(\"en-US\", {\n    year: \"numeric\", month: \"long\", day: \"numeric\"\n  });\n}\n\n\n// =====================================================\n// 4) RETURN FINAL OBJECT\n// =====================================================\nreturn [\n  {\n    json: {\n      summary: fullText,\n      summaryDate,\n      validCount,\n      expiredCount,\n      totalCount,\n      validMembers,\n      expiredMembers\n    }\n  }\n];\n"
+      },
+      "name": "🧩 Aggregate AI Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        128
+      ],
+      "id": "85bcf73b-c0dc-4f08-91c5-c5902f1b3658"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract data from previous node (Aggregate Results)\nconst date = $json.summaryDate || new Date().toLocaleDateString();\nconst validMembers = $json.validMembers || [];\nconst expiredMembers = $json.expiredMembers || [];\nconst totalStudents = $json.totalCount || (validMembers.length + expiredMembers.length);\n\n// Format current time for footer\nconst now = new Date();\nconst timeString = now.toLocaleTimeString(\"en-US\", {\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n});\n\n// Build HTML report\nconst htmlBody = `\n<html>\n  <body style=\"font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin:0; padding:0;\">\n    <!-- Header -->\n    <div style=\"background-color:#3E8485; padding:15px 25px; display:flex; align-items:center;\">\n      <div style=\"font-size:24px; font-weight:bold; color:white; letter-spacing:2px;\">AH</div>\n      <div style=\"flex-grow:1; text-align:right; color:white; font-size:14px;\">\n        ${date}\n      </div>\n    </div>\n\n    <!-- Body -->\n    <div style=\"padding:25px;\">\n      <h2 style=\"color:#0b5394; margin-top:0;\">📅 Daily Attendance Summary</h2>\n      <p><strong>Date:</strong> ${date}</p>\n\n      <h3>📊 Attendance Counts</h3>\n      <ul>\n        <li><strong>Total Students:</strong> ${totalStudents}</li>\n        <li><strong>✅ Valid:</strong> ${$json.validCount}</li>\n        <li><strong>❌ Expired:</strong> ${$json.expiredCount}</li>\n      </ul>\n\n      <hr style=\"border:1px solid #ccc; margin:20px 0;\">\n\n      <h3 style=\"color:green;\">✅ Valid Members</h3>\n      <ul>\n        ${\n          validMembers.length > 0\n            ? validMembers.map(name => `<li>${name}</li>`).join('')\n            : '<li><em>No valid members today.</em></li>'\n        }\n      </ul>\n\n      <hr style=\"border:1px solid #ccc; margin:20px 0;\">\n\n      <h3 style=\"color:red;\">❌ Expired Members</h3>\n      <ul>\n        ${\n          expiredMembers.length > 0\n            ? expiredMembers.map(name => `<li>${name}</li>`).join('')\n            : '<li><em>No expired members today.</em></li>'\n        }\n      </ul>\n\n      <p style=\"font-size:12px;color:#777;margin-top:30px;\">\n        This email was automatically generated on ${date}.\n      </p>\n    </div>\n\n    <!-- Footer -->\n    <div style=\"background-color:#3E8485; color:white; padding:10px 25px; text-align:center; font-size:12px;\">\n      Generated by AH Attendance Automation – MIT<br>\n      <span style=\"opacity:0.8;\">Report generated at ${timeString}</span>\n    </div>\n  </body>\n</html>\n`;\n\nreturn [{ json: { htmlBody } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        128
+      ],
+      "id": "ddf11d55-b37f-4fde-a9a2-4e8b7d7e8505",
+      "name": "📰 Build HTML Report"
+    },
+    {
+      "parameters": {
+        "fromEmail": "attendance-agent@ahannawati.com",
+        "toEmail": "ahannawati@academic.mit.edu.au",
+        "subject": "Daily Attendance Summary",
+        "text": "=Daily Attendance Summary – {{ $json.summaryDate }}\n\n📅 Date: {{ $json.timestamp || $now }}\n👩‍🏫 Total students: {{ $json.validCount + $json.expiredCount }}\n✅ Valid: {{ $json.validCount }}\n❌ Expired: {{ $json.expiredCount }}\n",
+        "html": "={{ $json.htmlBody }}",
+        "options": {}
+      },
+      "name": "✉️ Email Attendance Summary",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        736,
+        128
+      ],
+      "id": "54b116f8-8e3b-433b-8f53-c5533f6f9caa",
+      "credentials": {
+        "smtp": {
+          "id": "CZeT4sYnwKPzvush",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/record-summary",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"summaryDate\": \"{{$node['🧩 Aggregate AI Results'].json.summaryDate}}\",\n  \"validCount\": \"{{$node['🧩 Aggregate AI Results'].json.validCount}}\",\n  \"expiredCount\": \"{{$node['🧩 Aggregate AI Results'].json.expiredCount}}\",\n  \"validMembers\": \"{{$node['🧩 Aggregate AI Results'].json.validMembers}}\",\n  \"expiredMembers\": \"{{$node['🧩 Aggregate AI Results'].json.expiredMembers}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        128
+      ],
+      "id": "78c1ef36-7f57-4ea4-8df2-db8ec0c7cc4d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1fw2JRihiwhzqx2wW40z5josdimCH7uTjCEyVknTUJrQ",
+          "mode": "list",
+          "cachedResultName": "QR_Blockchain_Ledger",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fw2JRihiwhzqx2wW40z5josdimCH7uTjCEyVknTUJrQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fw2JRihiwhzqx2wW40z5josdimCH7uTjCEyVknTUJrQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Summary Date": "={{$json[\"summaryDate\"]}}",
+            "Timestamp": "={{$json[\"timestamp\"]}}",
+            "Block #": "={{$json[\"blockNumber\"]}}",
+            "Gas Used": "={{$json[\"gasUsed\"]}}",
+            "Tx Hash": "={{$json[\"txHash\"]}}",
+            "Summary Hash": "={{$json[\"summaryHash\"]}}",
+            "Valid Count": "={{$json[\"validCount\"]}}",
+            "Expired Count": "={{$json[\"expiredCount\"]}}",
+            "Valid Members": "={{$json[\"validMembers\"].join(\", \")}}",
+            "Expired Members": "={{$json[\"expiredMembers\"].join(\", \")}}",
+            "Summary Text": "={{$json[\"summaryText\"]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Summary Date",
+              "displayName": "Summary Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary Hash",
+              "displayName": "Summary Hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary Text",
+              "displayName": "Summary Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Valid Count",
+              "displayName": "Valid Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expired Count",
+              "displayName": "Expired Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Valid Members",
+              "displayName": "Valid Members",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expired Members",
+              "displayName": "Expired Members",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tx Hash",
+              "displayName": "Tx Hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Block #",
+              "displayName": "Block #",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gas Used",
+              "displayName": "Gas Used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        352
+      ],
+      "id": "4dfd82f1-5ea9-47e5-85be-8bf344e2d750",
+      "name": "📊 Save to Attendance Ledger",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9PkDMTebBnKEvr92",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "record-summary",
+        "options": {}
+      },
+      "id": "41de7def-7fe6-4b37-9985-32fc8268fd71",
+      "name": "📥 Receive Attendance Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        352
+      ],
+      "webhookDescription": "Receives JSON summary from Workflow D",
+      "webhookId": "8a1fea59-11bc-49cc-acde-047bc518fe71"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Simple deterministic hash (FNV-1a) ---\nfunction simpleHash(str) {\n  let hash = 2166136261;\n  for (let i = 0; i < str.length; i++) {\n    hash ^= str.charCodeAt(i);\n    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);\n  }\n  return (\"0000000\" + (hash >>> 0).toString(16)).slice(-8);\n}\n\n// --- Extract nested data safely ---\nconst data =\n  $json.receivedData?.body ||\n  $json.body ||\n  $json || {};\n\n// --- Parse and clean fields ---\nconst summaryDate = data.summaryDate || \"N/A\";\nconst validCount = data.validCount || \"0\";\nconst expiredCount = data.expiredCount || \"0\";\nconst validMembers = (data.validMembers || \"\").split(\",\").map(x => x.trim()).filter(Boolean);\nconst expiredMembers = (data.expiredMembers || \"\").split(\",\").map(x => x.trim()).filter(Boolean);\n\n// --- Canonical string ---\nconst summaryText = `${summaryDate}|${validCount}|${expiredCount}|${validMembers.join(\",\")}|${expiredMembers.join(\",\")}`;\n\n// --- Short hash ---\nconst summaryHash = simpleHash(summaryText);\n\n// --- Return clean structured output ---\nreturn [\n  {\n    json: {\n      summaryHash,\n      summaryText,\n      summaryDate,\n      validCount,\n      expiredCount,\n      validMembers,\n      expiredMembers,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        352
+      ],
+      "id": "ee5067d1-c47d-4579-ae4f-e9fbc8312493",
+      "name": "🧮 Generate Summary + Hash"
+    },
+    {
+      "parameters": {
+        "command": "=cmd /C node \"C:\\Users\\User\\blockchain\\storeHash.js\" \"{{ $json[\"summaryHash\"] }}\" \"{{ $json[\"summaryDate\"] }}\" \"{{ $json[\"validCount\"] }}\" \"{{ $json[\"expiredCount\"] }}\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        32,
+        352
+      ],
+      "id": "2d9847e4-7f3a-41e4-b3c7-167b53365f1c",
+      "name": "🔗 Save Hash to Blockchain"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw outputs\nconst attendance = $items(\"🧮 Generate Summary + Hash\")[0].json;\nconst execOutput = $json;\n\n// Extract and parse the blockchain JSON from stdout\nconst match = execOutput.stdout.match(/{[\\s\\S]*}$/); // find last JSON object\nconst blockchain = match ? JSON.parse(match[0]) : {};\n\n// Combine attendance + blockchain data\nreturn [\n  {\n    json: {\n      summaryDate: attendance.summaryDate,\n      summaryHash: attendance.summaryHash,\n      summaryText: attendance.summaryText,\n      validCount: attendance.validCount,\n      expiredCount: attendance.expiredCount,\n      validMembers: attendance.validMembers,\n      expiredMembers: attendance.expiredMembers,\n      txHash: blockchain.txHash || null,\n      blockNumber: blockchain.blockNumber || null,\n      gasUsed: blockchain.gasUsed || null,\n      timestamp: blockchain.timestamp || null,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        352
+      ],
+      "id": "2638270b-a210-41b1-bcf3-f1c0ffeb01b2",
+      "name": "🧩 Merge Results"
+    },
+    {
+      "parameters": {
+        "content": "🔴 Workflow E – Blockchain Ledger Recorder",
+        "height": 208,
+        "width": 976,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "cc4453b0-6ed8-42c3-babf-4d1cdf0240ff",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {
+    "🧮 Generate Summary + Hash": [
+      {
+        "json": {
+          "summaryHash": "cbbe2b8b",
+          "summaryText": "October 18, 2025|6|3|MIT999888,MIT234567,MIT555888,MIT666777,MIT876543,MIT123456|MIT123456,MIT111222,MIT456789",
+          "summaryDate": "October 18, 2025",
+          "validCount": "6",
+          "expiredCount": "3",
+          "validMembers": [
+            "MIT999888",
+            "MIT234567",
+            "MIT555888",
+            "MIT666777",
+            "MIT876543",
+            "MIT123456"
+          ],
+          "expiredMembers": [
+            "MIT123456",
+            "MIT111222",
+            "MIT456789"
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "🕒 QR Trigger1": {
+      "main": [
+        [
+          {
+            "node": "💻 Generate QR Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💻 Generate QR Token": {
+      "main": [
+        [
+          {
+            "node": "📄 Save QR Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📄 Save QR Entry": {
+      "main": [
+        []
+      ]
+    },
+    "🌐 Get QR Webhook": {
+      "main": [
+        [
+          {
+            "node": "🔍 Fetch Latest QR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Fetch Latest QR": {
+      "main": [
+        [
+          {
+            "node": "🔧 Build Form & QR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔧 Build Form & QR": {
+      "main": [
+        [
+          {
+            "node": "🌐 Get QR Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 Get QR Image": {
+      "main": [
+        [
+          {
+            "node": "📤 Display QR Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📥 Submit Attendance": {
+      "main": [
+        [
+          {
+            "node": "🔍 Match Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔍 Match Token": {
+      "main": [
+        [
+          {
+            "node": "✅ Validate Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Validate Submission": {
+      "main": [
+        [
+          {
+            "node": "🗒️ Log Attendance Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🗒️ Log Attendance Result": {
+      "main": [
+        [
+          {
+            "node": "📤 Send Validation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⏰ Daily Summary Trigger": {
+      "main": [
+        [
+          {
+            "node": "📊 Load Attendance Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Load Attendance Data": {
+      "main": [
+        [
+          {
+            "node": "🧠 Build Summary Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧠 Build Summary Prompt": {
+      "main": [
+        [
+          {
+            "node": "🤖 Generate AI Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 Generate AI Summary": {
+      "main": [
+        [
+          {
+            "node": "🧩 Aggregate AI Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Aggregate AI Results": {
+      "main": [
+        [
+          {
+            "node": "📰 Build HTML Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📰 Build HTML Report": {
+      "main": [
+        [
+          {
+            "node": "✉️ Email Attendance Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✉️ Email Attendance Summary": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Save to Attendance Ledger": {
+      "main": [
+        []
+      ]
+    },
+    "📥 Receive Attendance Webhook": {
+      "main": [
+        [
+          {
+            "node": "🧮 Generate Summary + Hash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧮 Generate Summary + Hash": {
+      "main": [
+        [
+          {
+            "node": "🔗 Save Hash to Blockchain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔗 Save Hash to Blockchain": {
+      "main": [
+        [
+          {
+            "node": "🧩 Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🧩 Merge Results": {
+      "main": [
+        [
+          {
+            "node": "📊 Save to Attendance Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "18fd2037-bc7a-4246-b3d0-fd6fe120a7f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b1566fea0984cf69ac331f37353b799b8724bb8ab7ae8684deb50fa59653da78"
+  },
+  "id": "2kBAqpEPwM2lu163",
+  "tags": []
+}
